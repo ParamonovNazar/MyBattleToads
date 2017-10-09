@@ -21,6 +21,8 @@ public class CharMovement : MonoBehaviour {
     private float lockBetweenAttacks;
     [SerializeField]
     private PlayerState state;
+    [SerializeField]
+    private GameObject AttackTrigger;
     private float timeToUnlock;
     private float timeToUnlockAttack=-1f;
     Vector3 forward,right;
@@ -30,6 +32,7 @@ public class CharMovement : MonoBehaviour {
 		forward.y = 0;
 		forward = Vector3.Normalize (forward);
 		right = Quaternion.Euler (new Vector3(0,90,0))*forward;
+        AttackTrigger.SetActive(false);
     }
 
     // Update is called once per frame
@@ -77,7 +80,6 @@ public class CharMovement : MonoBehaviour {
     }
 
     void Attack() {
-        Debug.Log(timeToUnlockAttack);
         anim.SetInteger("State", 4);
         anim.Play("LeftSimpleAttack", -1, 0f);
         Vector3 AttackForce = right;
@@ -90,8 +92,13 @@ public class CharMovement : MonoBehaviour {
         state = PlayerState.Attack;
         timeToUnlock = lockTime;
         timeToUnlockAttack = lockBetweenAttacks;
+        AttackTrigger.SetActive(true);
+        StartCoroutine(ChangeActive(false, AttackTrigger,0.1f));     
     }
-
+    IEnumerator ChangeActive(bool active,GameObject g, float t = 0.1f) {
+        yield return new WaitForSeconds(t);
+        g.SetActive(active);
+    }
 	void Move(){
         Vector3 rightMovement = right * moveSpeed * Time.deltaTime * Input.GetAxis("Horizontal");
         Vector3 upMovement = forward * moveSpeed * Time.deltaTime * Input.GetAxis("Vertical");
