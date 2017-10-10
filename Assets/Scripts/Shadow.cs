@@ -27,11 +27,9 @@ public class Shadow : MonoBehaviour {
         RaycastHit hit;
         if (Physics.Raycast(target.position,Vector3.down, out hit,WhatIsGround))
         {
-            Debug.Log(hit.distance+" "+ height);
             if (hit.distance - height > 0.01)
             {
                 sprite.enabled = true;
-                Debug.Log(hit.point);
                 transform.position = hit.point+new Vector3(0,0.001f,0);
             }
             else {

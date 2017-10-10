@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class CharMovement : MonoBehaviour {
-
+    [SerializeField]
+    private PlayerState state;
+    //MOVE
     private bool fasingRight =true;
     [SerializeField]
     private Transform transformFlip;
@@ -19,15 +21,25 @@ public class CharMovement : MonoBehaviour {
     private float lockTime;
     [SerializeField]
     private float lockBetweenAttacks;
-    [SerializeField]
-    private PlayerState state;
+    Vector3 forward, right;
+   
+    //ATTACK
     [SerializeField]
     private GameObject AttackTrigger;
+    [SerializeField]
+    private int[] hitSeq ;
+    [SerializeField]
+    private int countHit=0;
+    private int curHit=0;
+    private float timeToUnlockAttack = -1f;
     private float timeToUnlock;
-    private float timeToUnlockAttack=-1f;
-    Vector3 forward,right;
-	// Use this for initialization
-	void Start(){
+
+    //RESIVE DAMAGE
+
+
+
+    // Use this for initialization
+    void Start(){
 		forward = Camera.main.transform.forward;
 		forward.y = 0;
 		forward = Vector3.Normalize (forward);
@@ -45,6 +57,7 @@ public class CharMovement : MonoBehaviour {
             if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.RightArrow)
             || Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow))
             {
+                curHit = 0;
                 Move();
             }
             if (Input.GetKeyDown(KeyCode.Z)) {
@@ -80,8 +93,10 @@ public class CharMovement : MonoBehaviour {
     }
 
     void Attack() {
+        Debug.Log(curHit);
         anim.SetInteger("State", 4);
-        anim.Play("LeftSimpleAttack", -1, 0f);
+        anim.SetInteger("Attack", hitSeq[curHit]);
+        anim.Play(GetAttackName(), -1, 0f);
         Vector3 AttackForce = right;
         if (!fasingRight) {
             AttackForce = right * -1f;
@@ -93,11 +108,42 @@ public class CharMovement : MonoBehaviour {
         timeToUnlock = lockTime;
         timeToUnlockAttack = lockBetweenAttacks;
         AttackTrigger.SetActive(true);
-        StartCoroutine(ChangeActive(false, AttackTrigger,0.1f));     
+        StartCoroutine(ChangeActive(false, AttackTrigger,0.1f));
+        curHit++;
+        if (curHit >= countHit) {
+            curHit = 0;
+        }
     }
     IEnumerator ChangeActive(bool active,GameObject g, float t = 0.1f) {
         yield return new WaitForSeconds(t);
         g.SetActive(active);
+    }
+
+    string GetAttackName() {
+        int hit = hitSeq[curHit];
+        if (FinalAttack()) {
+            return "StrongAttack2";
+        }
+        if (hit == 0) {
+            return "LeftSimpleAttack";
+        }
+        if (hit == 1)
+        {
+            return "RightSimpleAttack";
+        }
+       /* if (hit == 2)
+        {
+            return "StrongAttack1";
+        }
+        if (hit == 3)
+        {
+            return "StrongAttack2";
+        }*/
+        return "LeftSimpleAttack";
+    }
+
+    bool FinalAttack() {
+        return false;
     }
 	void Move(){
         Vector3 rightMovement = right * moveSpeed * Time.deltaTime * Input.GetAxis("Horizontal");
