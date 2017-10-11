@@ -79,8 +79,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\AISimple.cs" />
+    <Compile Include="Assets\Scripts\Attack.cs" />
     <Compile Include="Assets\Scripts\CharMovement.cs" />
     <Compile Include="Assets\Scripts\DamageTrigger.cs" />
+    <Compile Include="Assets\Scripts\Moving.cs" />
     <Compile Include="Assets\Scripts\PlayerState.cs" />
     <Compile Include="Assets\Scripts\Shadow.cs" />
   </ItemGroup>
